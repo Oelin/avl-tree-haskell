@@ -29,6 +29,7 @@ insert node tree@(Node left k d right)
 
 
 delete :: Ord a => a -> Tree a -> Tree a
+delete key Nil = Nil
 
 delete key tree@(Node left k d right)
   | key < k = balance (update (Node (delete key left) k d right))
