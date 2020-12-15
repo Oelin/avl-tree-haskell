@@ -14,6 +14,11 @@ depth (Node _ _ d _) = d
 depth Nil = 0
 
 
+after :: Ord a => Tree a -> Tree a
+after node@(Node Nil _ _ _) = node
+after (Node left _ _ _) = after left
+
+
 insert :: Ord a => Tree a -> Tree a -> Tree a
 insert node Nil = node
 
@@ -21,6 +26,25 @@ insert node tree@(Node left k d right)
   | key node < k = balance (update (Node (insert node left) k d right))
   | key node > k = balance (update (Node left k d (insert node right)))
   | otherwise = tree
+
+
+delete :: Ord a => a -> Tree a -> Tree a
+
+delete key tree@(Node left k d right)
+  | key < k = balance (update (Node (delete key left) k d right))
+  | key > k = balance (update (Node left k d (delete key right)))
+  | otherwise = delete' tree
+
+
+delete' :: Ord a => Tree a -> Tree a
+delete' (Node Nil k d Nil) = Nil
+delete' (Node left k d Nil) = left
+delete' (Node Nil k d right) = right
+
+
+delete' node@(Node left k d right)
+  = update (Node left k' d (delete k' right))
+    where k' = key (after right)
 
 
 balance :: Tree a -> Tree a
@@ -51,7 +75,7 @@ rotateL (Node left key d (Node l k d' r))
 
 
 update :: Tree a -> Tree a
-update (Node left key d right) = (Node left key d' right)
+update (Node left key d right) = Node left key d' right
   where d' = 1 + max (depth right) (depth left)
 
 
