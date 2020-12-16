@@ -51,10 +51,10 @@ delete' node@(Node left k d right)
 balance :: Tree a -> Tree a
 
 balance node@(Node left key d right)
-  | wn == 2 && wl >= 0 = rotateR node
-  | wn == -2 && wr <= 0 = rotateL node
-  | wn == 2 && wl == -1 = rotateR (Node left key d (rotateL left))
-  | wn == -2 && wr == 1 = rotateL (Node (rotateR right) key d left)
+  | wn == 2 && wl > 0 = rotateR node
+  | wn == -2 && wr < 0 = rotateL node
+  | wn == 2 && wl == -1 = rotateR (Node (rotateL left) key d right)
+  | wn == -2 && wr == 1 = rotateL (Node left key d (rotateR right))
   | otherwise = node
   where wn = weight node
         wl = weight left
